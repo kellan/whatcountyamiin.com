@@ -1,0 +1,48 @@
+<html>
+<head>
+	<title>What Country Am I In</title>
+	<meta name="viewport" content="width=320">
+	<link rel="apple-touch-icon" href="/happy-day-logo-icon.png"/>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="wx.js?v=2"></script>
+	<script type="text/javascript">
+		var flickr_key='0685bd9136482f83f23704f29311d33a'
+		
+		$(document).ready(function() {
+			
+			function gotCoords(position) {
+				if (position && position.coords.latitude && position.coords.longitude) {
+					geocoder = "http://api.flickr.com/services/rest/?method=flickr.places.findByLatLon" +
+						"&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + 
+						"&api_key=" + flickr_key + "&format=json&nojsoncallback=1"
+					
+					$.getJSON(geocoder, function(data) {
+						$('#result').text( data.places.place[0].name )
+					})
+				}
+			}
+			
+			function cantGetCoords(e) {
+				//console.log("cantGet");
+				$('#result').text("Can't determine your location :(");
+			}
+
+			if (WX.geoloc.can_locate()) {
+				WX.geoloc.get_location(gotCoords, cantGetCoords);
+			} else {
+				cantGetCoords('');
+			}
+		});
+	</script>
+	<style>
+	body { 
+		font-family: Arial, Helvetica, sans-serif;
+	}
+	.meta { font-size: 11px; color: #999; }
+	</style>
+</head>
+<body>
+	<div id="container">
+	<p id="result">Locating you, hold on ....</p>
+	</div>
+</html>
